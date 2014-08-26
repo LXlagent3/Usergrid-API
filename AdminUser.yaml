@@ -1,0 +1,342 @@
+swagger: 2
+info:
+  title: UserGrid API
+  description: UserGrid API
+  version: 1.0.0
+host: api.usergrid.com
+schemes:
+  - https
+basePath: /
+produces:
+  - application/json
+paths:
+  management/users:
+    post:
+      summary: Creating an admin user
+      description: Use the POST method to create an admin user.
+      parameters:
+        - name: username
+          in: query
+          description: "user's username"
+          required: true
+          type: string
+        - name: email
+          in: query
+          description: "user's email"
+          required: true
+          type: string
+        - name: user
+          in: query
+          description: "user's name"
+          required: true
+          type: string
+        - name: password
+          in: query
+          description: "user's password"
+          required: true
+          type: string
+      tags:
+        - User Info
+      responses:
+        "200":
+          description: "An array of new created Admin user's info"
+          schema:
+            $ref: User Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+    put:
+      summary: Updating an admin user
+      description: Use the PUT method to update an admin user.
+      parameters:
+        - name: userID
+          in: query
+          description: "one of the user's identification which indludes username, real name, email address or uuID"
+          required: false
+          type: string
+        - name: city
+          in: query
+          description: "user's update to the city"
+          required: true
+          type: string
+        - name: state
+          in: query
+          description: "user's update to the state"
+          required: true
+          type: string
+      tags:
+        - User Info
+      responses:
+        "200":
+          description: "An array of user's details"
+          schema:
+            $ref: User Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+    get:
+      summary: Getting an admin user
+      description: Use the GET method to retrieve details about an admin user.
+      parameters:
+        - name: userID
+          in: query
+          description: "one of the user's identification which indludes username, real name, email address or uuID"
+          required: false
+          type: string
+      tags:
+        - User Info
+      responses:
+        "200":
+          description: "An array of user's details"
+          schema:
+            $ref: User Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+  management/users/resetpw:
+    post:
+      summary: Completing a password reset
+      description: Use the POST method to complete the password reset.
+      parameters:
+        - name: captcha challenge
+          in: query
+          description: parameters and values of captcha challenge
+          required: true
+          type: string
+        - name: "admin user's response"
+          in: query
+          description: "the admin user's response to the captcha challenge"
+          required: true
+          type: string
+        - name: email
+          in: query
+          description: "user's email"
+          required: true
+          type: string
+      tags:
+        - Action Response Info
+      responses:
+        "200":
+          description: An array of complete messages
+          schema:
+            $ref: Action Response Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+  managementusers/resetpw:
+    get:
+      summary: Initiating a password reset
+      description: Use the GET method to initiate the password reset.
+      tags:
+        - Action Response Info
+      responses:
+        "200":
+          description: An array of complete messages
+          schema:
+            $ref: Action Response Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+  management/users/{userID}/password:
+    put:
+      summary: "Setting an admin user's password"
+      description: "Use the PUT method to update an admin user's password."
+      parameters:
+        - name: userID
+          in: path
+          description: "one of the user's identification which indludes username, real name, email address or uuID"
+          required: false
+          type: string
+        - name: password
+          in: query
+          description: "user's old password"
+          required: true
+          type: string
+        - name: newpassword
+          in: query
+          description: "user's new password"
+          required: true
+          type: string
+      tags:
+        - Action Response Info
+      responses:
+        "200":
+          description: An array of complete messages
+          schema:
+            $ref: Action Response Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+  management/users/{userID}/activate:
+    get:
+      summary: Activating an admin user
+      description: Use the GET method to activate an admin user from a link provided in an email notification. The complete request URI should be "GET /management/organizations/{org}/users/{user|username|email|uuid}/activate?token={token}&confirm={confirm_email}".
+      parameters:
+        - name: userID
+          in: path
+          description: "one of the user's identification which indludes username, real name, email address or uuID"
+          required: false
+          type: string
+        - name: token
+          in: query
+          description: activation token
+          required: true
+          type: string
+        - name: confirm_email
+          in: query
+          description: send confimation email
+          required: true
+          type: boolean
+      tags:
+        - Action Response Info
+      responses:
+        "200":
+          description: An array of complete messages
+          schema:
+            $ref: Action Response Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+  management/users/{userID}/reactivate:
+    get:
+      summary: Reactivating an admin user
+      description: Use the GET method to reactivate an admin user.
+      parameters:
+        - name: userID
+          in: path
+          description: "one of the user's identification which indludes username, real name, email address or uuID"
+          required: false
+          type: string
+      tags:
+        - Action Response Info
+      responses:
+        "200":
+          description: An array of complete messages
+          schema:
+            $ref: Action Response Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+  management/users/{userID}/feed:
+    get:
+      summary: "Getting an admin user's activity feed"
+      description: "Use the GET method to retrieve an admin user's activity feed."
+      parameters:
+        - name: userID
+          in: path
+          description: "one of the user's identification which indludes username, real name, email address or uuID"
+          required: false
+          type: string
+      tags:
+        - User's Activity Feed
+      responses:
+        "200":
+          description: "An array of user's activity"
+          schema:
+            $ref: User's Activity Feed
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+definitions:
+  User Info:
+    properties:
+      applicationid:
+        type: string
+        description: the application ID of a user
+      username:
+        type: string
+        description: the username of a user
+      name:
+        type: string
+        description: the name of a user
+      email:
+        type: string
+        description: the email of a user
+      activated:
+        type: boolean
+        description: indicate whether the account is activated or not
+      disabled:
+        type: boolean
+        description: indicate whether the account is disabled or not
+      uuid:
+        type: string
+        description: the uuid of a user
+      adminUser:
+        type: boolean
+        description: indicate whether the use is a adminUser or not
+      displayEmailAddress:
+        type: string
+        description: the display of the email of a user 
+      htmldisplayEmailAddress:
+        type: string
+        description: the HTML display of the email of a user
+  Action Response Info:
+    properties:
+      action:
+        type: string
+        description: the requested action
+      status:
+        type: string
+        description: the status of the requested action
+      timestamp:
+        type: string
+        description: the timestamp of the requested action
+      duration:
+        type: string
+        description: the duration of the requested action
+      token:
+        type: string 
+        description: the token required for getting an AdminUser 
+  User's Activity Feed:
+    properties:
+      uuid:
+        type: string
+        description: the uuid of a user
+      type:
+        type: string
+        description: the type of the entity
+      created:
+        type: number
+        description: the ID of the created one
+      modified:
+        type: number
+        description: the ID of the modified one
+      displayname:
+        type: string
+        description: the display of the name of the user's name
+      objecttype:
+        type: string
+        description: the type of the object
+      actoruuid:
+        type: string
+        description: the uuid of the actor
+      entitytype:
+        type: string
+        description: the type of the entity
+      category:
+        type: string
+        description: the category of the entity
+      cursor:
+        type: string
+        description: the cursor of the metadata
+      path:
+        type: string
+        description: the path of the metadata
+  Error:
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: object
