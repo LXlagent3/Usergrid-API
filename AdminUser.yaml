@@ -65,7 +65,7 @@ paths:
       description: Use the GET method to retrieve details about an admin user.
       parameters:
         - name: userID
-          in: query
+          in: path
           description: "one of the user's identification which includes username, real name, email address or uuID"
           required: true
           type: string
@@ -494,7 +494,7 @@ paths:
         - Application Data
       responses:
         "200":
-          description: "An array of deleted application info"
+          description: "An array of deleted application info."
           schema:
             $ref: Application Data
         default:
@@ -504,8 +504,7 @@ paths:
   management/organizations|orgs/{orgID}/applications|apps/{appID}/credentials:
     post:
       summary: Generating application credentials
-      descriptions: Use the POST method to generate the client ID and client secret credentials for an application in an organization.
-      parameters: 
+      description: Use the POST method to generate the client ID and client secret credentials for an application in an organization.
       parameters:
         - name: orgID
           in: path
@@ -521,7 +520,7 @@ paths:
         - Credential Info
       responses:
         "200":
-          description: "An array of generated credentials info"
+          description: "An array of generated credentials info."
           schema:
             $ref: Credential Info
         default:
@@ -546,7 +545,7 @@ paths:
         - Credential Info
       responses:
         "200":
-          description: "An array of retrieved credentials info"
+          description: "An array of retrieved credentials info."
           schema:
             $ref: Credential Info
         default:
@@ -567,7 +566,7 @@ paths:
         - Application Data
       responses:
         "200":
-          description: "An array of retrieved application data"
+          description: "An array of retrieved application data."
           schema:
             $ref: Application Data
         default:
@@ -593,7 +592,7 @@ paths:
         - User Info
       responses:
         "200":
-          description: "An array of new added Admin user's info"
+          description: "An array of new added Admin user's info."
           schema:
             $ref: User Info
         default:
@@ -614,7 +613,7 @@ paths:
         - User Info
       responses:
         "200":
-          description: "An array of retrieved Admin user's info"
+          description: "An array of retrieved Admin user's info."
           schema:
             $ref: User Info
         default:
@@ -640,25 +639,410 @@ paths:
         - User Info
       responses:
         "200":
-          description: "An array of deleted Admin user's info"
+          description: "An array of deleted Admin user's info."
           schema:
             $ref: User Info
         default:
           description: Unexpected error
           schema:
             $ref: Error
+
+  /{orgID}/{appID}/{collectionID}:
+    get:
+      summary: Retrieving sets of entities from a collection
+      description: Use the GET method to retrieve a set of entities from a collection.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: collectionID
+          in: path
+          description: one of the collection's identification which includes name or uuid.
+          required: true
+          type: string 
+      tags:
+        - Entity Info
+      responses:
+        "200":
+          description: "An array of retrieved collection's info."
+          schema:
+            $ref: Entity Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+  /{orgID}/{appID}/{entitytype}:
+    post:
+      summary: Creating a custom entity
+      description: When a new entity is created, API Services will automatically create a corresponding collection if one does not already exist. The collection will automatically be named with the plural form of the entity type. 
+      parameters: 
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string   
+        - name: entitytype
+          in: path
+          description: the entity type to create
+          required: true
+          type: string
+        - name: entityproperty
+          in: body
+          description: the properties of the entity
+          required: true
+          schema:
+            $ref: Entity Properties  
+      tags:
+        - Entity Info
+      responses:
+        "200":
+          description: "An array of created custom entity's info."
+          schema:
+            $ref: Entity Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+  /{orgID}/{appID}/{collectionID}/{entityID}:
+    get:
+      summary: Retrieving an entity
+      description: Use the GET method to retrieve an entity.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: collectionID
+          in: path
+          description: one of the collection's identification which includes name or uuid.
+          required: true
+          type: string
+        - name: entityID
+          in: path
+          description: one of the entity's identification which includes name or uuid.
+          required: true
+          type: string 
+      tags:
+        - Entity Info
+      responses:
+        "200":
+          description: "An array of retrieved entity's info."
+          schema:
+            $ref: Entity Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+    put:
+      summary: Updating an entity
+      description: One or more properties can be updated with a single PUT request.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: collectionID
+          in: path
+          description: one of the collection's identification which includes name or uuid.
+          required: true
+          type: string
+        - name: entityID
+          in: path
+          description: one of the entity's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: entityproperty
+          in: body
+          description: the properties of the entity
+          required: true
+          schema:
+            $ref: Entity Properties 
+      tags:
+        - Entity Info
+      responses:
+        "200":
+          description: "An array of updated entity's info."
+          schema:
+            $ref: Entity Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error         
+    delete:
+      summary: Deleting an entity
+      description: Use the DELETE method to delete an entity.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: collectionID
+          in: path
+          description: one of the collection's identification which includes name or uuid.
+          required: true
+          type: string
+        - name: entityID
+          in: path
+          description: one of the entity's identification which includes name or uuid.
+          required: true
+          type: string 
+      tags:
+        - Entity Info
+      responses:
+        "200":
+          description: "An array of deleted entity's info."
+          schema:
+            $ref: Entity Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error   
+  /{orgID}/{appID}/{collectionID}?{query}:
+    get:
+      summary: Query a collection
+      description: Use the GET method to retrieve collection through query statement.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: collectionID
+          in: path
+          description: one of the collection's identification which includes name or uuid.
+          required: true
+          type: string
+        - name: queryStatement
+          in: query
+          description: Any values specified in the query statement should be enclosed in single-quotes.
+          required: true
+          type: string
+      tags:
+        - Entity Info
+      responses:
+        "200":
+          description: "An array of retrieved collection's info."
+          schema:
+            $ref: Entity Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+    put:
+      summary: Update a collection by query
+      description: Use the PUT method to update collection through query statement.
+      parameters: 
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: collectionID
+          in: path
+          description: one of the collection's identification which includes name or uuid.
+          required: true
+          type: string
+        - name: queryStatement
+          in: query
+          description: Any values specified in the query statement should be enclosed in single-quotes.
+          required: true
+          type: string
+      tags:
+        - Entity Info
+      responses:
+        "200":
+          description: "An array of updated collection's info."
+          schema:
+            $ref: Entity Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+  /{orgID}/{appID}/{collectionID}/{entityID1}/{relation}/{entityID2}:
+    post:
+      summary: Add an entity to a collection or create a connection
+      description: Use the POST method to add an entity to a collection or create a connection
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: collectionID
+          in: path
+          description: one of the collection's identification which includes name or uuid.
+          required: true
+          type: string      
+        - name: entityID1
+          in: path
+          description: the id of the 1st entity.
+          required: true
+          type: string 
+        - name: relation
+          in: path
+          description: the relation between 1st entity and 2nd entity.
+          required: true
+          type: string 
+        - name: entityID2
+          in: path
+          description: the id of the 2nd entity.
+          required: true
+          type: string
+      tags:
+        - Entity Info
+      responses:
+        "200":
+          description: "An array of added entity's info."
+          schema:
+            $ref: Entity Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+    delete:
+      summary: Remove an entity from a collection or delete a connection
+      description: Use the DELETE method to remove an entity from a collection or delete a connection
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: collectionID
+          in: path
+          description: one of the collection's identification which includes name or uuid.
+          required: true
+          type: string      
+        - name: entityID1
+          in: path
+          description: the id of the 1st entity.
+          required: true
+          type: string 
+        - name: relation
+          in: path
+          description: the relation between 1st entity and 2nd entity.
+          required: true
+          type: string 
+        - name: entityID2
+          in: path
+          description: the id of the 2nd entity.
+          required: true
+          type: string
+      tags:
+        - Entity Info
+      responses:
+        "200":
+          description: "An array of deleted entity's info."
+          schema:
+            $ref: Entity Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
 definitions:
+  Entity Properties:
+    type: array
+    items:
+      $ref: Entity Property
+  Entity Property:
+    properties:
+      property:
+        type: string
+        description: the entity property
+      value:
+        type: string
+        description: the relevant value of the property
+  Entity Info:
+    properties:
+      applicationid:
+        type: string
+        description: the application id of the entity
+      parameters:
+        type: string
+        description: the parameters of the entity
+      path:
+        type: string
+        description: the path of the entity
+      uri:
+        type: string
+        description: the uri of the entity
+      entityproperty:
+        schema:
+          $ref: Entity
+      organization:
+        type: string
+        description: the name of the organization
+      applicationName:
+        type: string
+        description: the name of the application
+      count:
+        type: number
+        description: the number of the entities retrieved
+        format: int32
+      completeMsg:
+        schema:
+          $ref: Action Response Info
   Application Property:
     required:
       - token
       - name
     properties:
       token:
+        type: string        
         description: The OAuth2 access token.
-        type: string
       name:
-        description: The name of the application.
         type: string
+        description: The name of the application.
   Credential Info:
     properties:
       client_id:
@@ -958,6 +1342,16 @@ definitions:
       actorproperty:
         schema:
           $ref: Actor
+      metadata:
+        schema:
+          $ref: Metadata
+      name:
+        type: string
+        description: the name of the entity
+      price:
+        type: number
+        description: the price of the entity
+        format: int32
   Error:
     properties:
       code:
