@@ -15,26 +15,12 @@ paths:
       summary: Creating an admin user
       description: Use the POST method to create an admin user.
       parameters:
-        - name: username
-          in: query
-          description: "user's username"
+        - name: userproperty
+          in: body
+          description: One or more sets of user properties of which username is mandatory and must be unique
           required: true
-          type: string
-        - name: email
-          in: query
-          description: "user's email"
-          required: true
-          type: string
-        - name: user
-          in: query
-          description: "user's name"
-          required: true
-          type: string
-        - name: password
-          in: query
-          description: "user's password"
-          required: true
-          type: string
+          schema:
+            $ref: User Property
       tags:
         - User Info
       responses:
@@ -46,25 +32,23 @@ paths:
           description: Unexpected error
           schema:
             $ref: Error
+  management/users/{userID}:     
     put:
       summary: Updating an admin user
       description: Use the PUT method to update an admin user.
       parameters:
         - name: userID
-          in: query
-          description: "one of the user's identification which indludes username, real name, email address or uuID"
-          required: false
-          type: string
-        - name: city
-          in: query
-          description: "user's update to the city"
+          in: path
+          description: "one of the user's identification which includes username, real name, email address or uuID"
           required: true
           type: string
-        - name: state
-          in: query
-          description: "user's update to the state"
+        - name: AdminUserUpdate
+          in: body
+          description: One or more sets of user properties
           required: true
-          type: string
+          schema: 
+            $ref: AdminUserUpdate
+
       tags:
         - User Info
       responses:
@@ -82,8 +66,8 @@ paths:
       parameters:
         - name: userID
           in: query
-          description: "one of the user's identification which indludes username, real name, email address or uuID"
-          required: false
+          description: "one of the user's identification which includes username, real name, email address or uuID"
+          required: true
           type: string
       tags:
         - User Info
@@ -101,21 +85,12 @@ paths:
       summary: Completing a password reset
       description: Use the POST method to complete the password reset.
       parameters:
-        - name: captcha challenge
-          in: query
-          description: parameters and values of captcha challenge
+        - name: ResetPW Complete Msg
+          in: body
+          description: Parameters and value for the Captcha challenge, the admin user's response to the Captcha challenge, and the admin user's email address.
           required: true
-          type: string
-        - name: "admin user's response"
-          in: query
-          description: "the admin user's response to the captcha challenge"
-          required: true
-          type: string
-        - name: email
-          in: query
-          description: "user's email"
-          required: true
-          type: string
+          schema: 
+            ref: ResetPW Complete Msg
       tags:
         - Action Response Info
       responses:
@@ -149,19 +124,15 @@ paths:
       parameters:
         - name: userID
           in: path
-          description: "one of the user's identification which indludes username, real name, email address or uuID"
-          required: false
-          type: string
-        - name: password
-          in: query
-          description: "user's old password"
+          description: "one of the user's identification which includes username, real name, email address or uuID"
           required: true
           type: string
-        - name: newpassword
-          in: query
-          description: "user's new password"
+        - name: ResetPW
+          in: body
+          description: the user's old and new password
           required: true
-          type: string
+          schema:
+            $ref: ResetPW
       tags:
         - Action Response Info
       responses:
@@ -173,23 +144,23 @@ paths:
           description: Unexpected error
           schema:
             $ref: Error
-  management/users/{userID}/activate:
+  management/users/{userID}/activate{token}{confirm_email}:
     get:
       summary: Activating an admin user
       description: Use the GET method to activate an admin user from a link provided in an email notification. The complete request URI should be "GET /management/organizations/{org}/users/{user|username|email|uuid}/activate?token={token}&confirm={confirm_email}".
       parameters:
         - name: userID
           in: path
-          description: "one of the user's identification which indludes username, real name, email address or uuID"
-          required: false
+          description: "one of the user's identification which includes username, real name, email address or uuID"
+          required: true
           type: string
         - name: token
-          in: query
+          in: path
           description: activation token
           required: true
           type: string
         - name: confirm_email
-          in: query
+          in: path
           description: send confimation email
           required: true
           type: boolean
@@ -211,8 +182,8 @@ paths:
       parameters:
         - name: userID
           in: path
-          description: "one of the user's identification which indludes username, real name, email address or uuID"
-          required: false
+          description: "one of the user's identification which includes username, real name, email address or uuID"
+          required: true
           type: string
       tags:
         - Action Response Info
@@ -232,21 +203,624 @@ paths:
       parameters:
         - name: userID
           in: path
-          description: "one of the user's identification which indludes username, real name, email address or uuID"
-          required: false
+          description: "one of the user's identification which includes username, real name, email address or uuID"
+          required: true
           type: string
       tags:
-        - User's Activity Feed
+        - Activity Feed
       responses:
         "200":
           description: "An array of user's activity"
           schema:
-            $ref: User's Activity Feed
+            $ref: Activity Feed
         default:
           description: Unexpected error
           schema:
             $ref: Error 
+  /{orgID}/{appID}/users/{userID}/activities:
+    post:
+      summary: Posting a user activity
+      description: Use the  POST method to create an activity in the activities collection.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string
+        - name: userID
+          in: path
+          description: one of the user's identification which includes name or uuid.
+          required: true
+          type: string  
+        - name: Activity Property
+          in: body
+          description: One or more sets of activity properties
+          required: true
+          schema:
+            $ref: Activity Property
+      tags:
+        - Activity Feed
+      responses:
+        "200":
+          description: "An array of user's activity"
+          schema:
+            $ref: Activity Feed
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+  /{orgID}/{appID}/groups/{groupID}/activities:
+    post:
+      summary: Posting an activity to a group
+      description: Use the POST method to post an activity to a specific group. In this case the activity is created in the activities collection and is accessible at the /activities endpoint to users who have the permission to read that endpoint. In addition, a relationship is established between the activity and the group, and because of that, the activity will appear in the group’s feed. The group "owns" the activity. Also, the activity will be published in the feed of all users that are members of the group.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string
+        - name: groupID
+          in: path
+          description: one of the group's identification which includes name or uuid.
+          required: true
+          type: string  
+        - name: Activity Property
+          in: body
+          description: One or more sets of activity properties
+          required: true
+          schema:
+            $ref: Activity Property
+      tags:
+        - Activity Feed
+      responses:
+        "200":
+          description: "An array of user's activity"
+          schema:
+            $ref: Activity Feed
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+  management/organizations|orgs:
+    post:
+      summary: Creating an organization
+      description: Use the POST method to create an organization through a form post.
+      parameters:
+        - name: Organization Property
+          in: body
+          description: A set of organization properties supplied through a form.
+          required: true
+          schema:
+            $ref: Organization Property
+      tags:
+        - Organization Info
+      responses:
+        "200":
+          description: "An array of created organization info"
+          schema:
+            $ref: Organization Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+  management/organizations|orgs/{orgID}:
+    get:
+      summary: Getting an organization
+      description: Use the GET method to retrieve an organization given a specified UUID or username.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string
+      tags:
+        - Organization Info
+      responses:
+        "200":
+          description: "An array of created organization info"
+          schema:
+            $ref: Organization Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+  management/organizations|orgs/{orgID}/activate{token}{confirm_email}:
+    get:
+      summary: Activating an organization
+      description: Use the GET method to activate an organization from a link provided in an email notification. The complete request URI is "GET /organizations|orgs/{org_name}|{uuid}/activate?token={token}&confirm={confirm_email}"
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string
+        - name: token
+          in: path
+          description: Activation token
+          required: true
+          type: string          
+        - name: confirm_email
+          in: path
+          description: Send confirmation email
+          required: true
+          type: boolean  
+      tags:
+        - Action Response Info
+      responses:
+        "200":
+          description: An array of complete messages
+          schema:
+            $ref: Action Response Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error   
+  management/organizations|orgs/{orgID}/reactivate:    
+    get:
+      summary: Reactivating an organization
+      description: Use the GET method to reactivate an organization.
+      parameters:   
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string
+      tags:
+        - Action Response Info
+      responses:
+        "200":
+          description: An array of complete messages
+          schema:
+            $ref: Action Response Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+  management/organizations|orgs/{orgID}/credentials:
+    post:
+      summary: Generating organization client credentials
+      description: Use the POST method to generate new credentials for an organization client.
+      parameters:   
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string
+      tags:
+        - Credential Info
+      responses:
+        "200":
+          description: An array of credential info
+          schema:
+            $ref: Credential Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+    get:
+      summary: Retrieving organization client credentials
+      description: Use the GET method to retrieve the credentials for an organization client.
+      parameters: 
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+      tags:
+        - Credential Info
+      responses:
+        "200":
+          description: An array of credential info
+          schema:
+            $ref: Credential Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+  management/organizations|orgs/{orgID}/feed:
+    get:
+      summary: Getting an organization's activity feed
+      description: Use the GET method to get an organization's activity feed.         
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+      tags:
+        - Activity Feed
+      responses:
+        "200":
+          description: An array of the organization's Activity Feed
+          schema:
+            $ref: Activity Feed
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error   
+  management/organizations|orgs/{orgID}/apps:
+    post:
+      summary: Creating an organization application
+      description: Use the POST method to create an application for an organization through a form post.
+      parameters:   
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: Application Property
+          in: body
+          description: A set of organization properties supplied through a form.
+          required: true
+          schema:
+            $ref: Application Property   
+      tags:
+        - Action Response Info
+      responses:
+        "200":
+          description: An array of complete messages
+          schema:
+            $ref: Action Response Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+  management/organizations|orgs/{orgID}/apps/{appID}:
+    delete:
+      summary: Removing an application from the organization
+      description: Use the DELETE method to remove an application from an organization.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string
+      tags:
+        - Application Data
+      responses:
+        "200":
+          description: "An array of deleted application info"
+          schema:
+            $ref: Application Data
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+  management/organizations|orgs/{orgID}/applications|apps/{appID}/credentials:
+    post:
+      summary: Generating application credentials
+      descriptions: Use the POST method to generate the client ID and client secret credentials for an application in an organization.
+      parameters: 
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string
+      tags:
+        - Credential Info
+      responses:
+        "200":
+          description: "An array of generated credentials info"
+          schema:
+            $ref: Credential Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+    get:
+      summary: Getting application credentials
+      description: Use the GET method to retrieve the client ID and client secret credentials for an application in an organization.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: appID
+          in: path
+          description: one of the application's identification which includes name or uuid.
+          required: true
+          type: string
+      tags:
+        - Credential Info
+      responses:
+        "200":
+          description: "An array of retrieved credentials info"
+          schema:
+            $ref: Credential Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+  management/organizations|orgs/{orgID}/applications|apps:
+    get:
+      summary: Getting the applications in an organization
+      description: Use the GET method to retrieve the applications in an organization.
+      parameters: 
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+      tags:
+        - Application Data
+      responses:
+        "200":
+          description: "An array of retrieved application data"
+          schema:
+            $ref: Application Data
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error 
+  management/organizations|orgs/{orgID}/users/{userID}:
+    put:
+      summary: Adding an admin user to an organization
+      description: Use the PUT method to add an existing admin user to an organization.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: userID
+          in: path
+          description: one of the user's identification which includes name email or uuid.
+          required: true
+          type: string      
+      tags:
+        - User Info
+      responses:
+        "200":
+          description: "An array of new added Admin user's info"
+          schema:
+            $ref: User Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+  management/organizations|orgs/{orgID}/users:
+    get:
+      summary: Getting the admin users in an organization
+      description: Use the GET method to retrieve details about the admin users in an organization.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+      tags:
+        - User Info
+      responses:
+        "200":
+          description: "An array of retrieved Admin user's info"
+          schema:
+            $ref: User Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
+  management/organizations|orgs/{orgID}/users/{userID}:
+    delete:
+      summary: Removing an admin user from an organization
+      description: Use the DELETE method to remove an admin user from an organization.
+      parameters:
+        - name: orgID
+          in: path
+          description: one of the orgnization's identification which includes name or uuid.
+          required: true
+          type: string 
+        - name: userID
+          in: path
+          description: one of the user's identification which includes name email or uuid.
+          required: true
+          type: string   
+      tags:
+        - User Info
+      responses:
+        "200":
+          description: "An array of deleted Admin user's info"
+          schema:
+            $ref: User Info
+        default:
+          description: Unexpected error
+          schema:
+            $ref: Error
 definitions:
+  Application Property:
+    required:
+      - token
+      - name
+    properties:
+      token:
+        description: The OAuth2 access token.
+        type: string
+      name:
+        description: The name of the application.
+        type: string
+  Credential Info:
+    properties:
+      client_id:
+        type: string
+        description: the id of the client
+      client_secret:
+        type: string
+        description: the secret of the client
+      completeMsg:
+        schema:
+          $ref: Action Response Info
+  Organization Info:
+    properties:
+      applicationid:
+        type: string
+        description: the application ID of the owner
+      username:
+        type: string
+        description: the username of the owner
+      name:
+        type: string
+        description: the name of the owner
+      email:
+        type: string
+        description: the email of the owner
+      activated:
+        type: boolean
+        description: indicate whether the account is activated or not
+      disabled:
+        type: boolean
+        description: indicate whether the account is disabled or not
+      uuid:
+        type: string
+        description: the uuid of the owner
+      adminUser:
+        type: boolean
+        description: indicate whether the use is a adminUser or not
+      displayEmailAddress:
+        type: string
+        description: the display of the email of the owner
+      htmldisplayEmailAddress:
+        type: string
+        description: the HTML display of the email of the owner
+      orgname:
+        type: string
+        description: the name of the organization
+      orguuid: 
+        type: string
+        description: the uuid of the organization
+      applicationdata:
+        schema:
+          $ref: Application Data
+      completeMsg:
+        schema:
+          $ref: Action Response Info
+  Application Data:
+    properties:
+      tester/sandbox: 
+        type: string
+        description: the uuid of tester/sandbox
+      tester/app1:
+        type: string
+        description: the uuid of tester/app1
+      tester/app2:
+        type: string
+        description: the uuid of tester/app2
+      completeMsg:
+        schema:
+          $ref: Action Response Info
+  Organization Property:
+    required:
+      - organization
+      - username
+      - name
+      - email
+      - password
+    properties:
+      organization:
+        type: string
+      username:
+        type: string
+      name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+  Activity Property:
+    required:
+      - displayName
+      - uuid
+      - username
+      - verb
+      - content
+    properties:
+      displayName:
+        type: string
+      uuid:
+        type: string
+      username:
+        type: string
+      image:
+        schema:
+          $ref: ImageModel
+      verb:
+        type: string
+      content:
+        type: string
+  ImageModel:
+    properties:
+      duration:
+        type: number
+        format: int32
+      height:
+        type: number
+        format: int32
+      url:
+        type: string
+      width:
+        type: integer
+        format: int32
+      email:
+        type: string
+  ResetPW Complete Msg:
+    required:
+      - recaptcha_response_field
+      - recaptcha_challenge_field
+      - email
+    properties:
+      recaptcha_response_field:
+        type: string
+      recaptcha_challenge_field:
+        type: string
+      email:
+        type: string
+  ResetPW:
+    required:
+      - password
+      - newpassword
+    properties:
+      password:
+        type: string
+      newpassword:
+        type: string
+  AdminUserUpdate:
+    properties:
+      city: 
+        type: string
+      state:
+        type: string
+  User Property:
+    required:
+      - username
+    properties:
+      username:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
   User Info:
     properties:
       applicationid:
@@ -279,6 +853,9 @@ definitions:
       htmldisplayEmailAddress:
         type: string
         description: the HTML display of the email of a user
+      completeMsg:
+        schema:
+          $ref: Action Response Info
   Action Response Info:
     properties:
       action:
@@ -296,41 +873,91 @@ definitions:
       token:
         type: string 
         description: the token required for getting an AdminUser 
-  User's Activity Feed:
+  Activity Feed:
+    properties:
+      entityproperty:
+        schema:
+          $ref: Entity
+      category:
+        type: string
+        description: the category of the activity
+      metadataproperty:
+        schema:
+          $ref: Metadata
+      objectproperty:
+        schema:
+          $ref: Object
+      title:
+        type: string
+        description: the title of the activity
+      verb:
+        type: string
+        description: the verb of the activity
+      published:
+        type: number
+        description: the published ID of the activity
+        format: int32
+      verb:
+        type: string
+        description: the verb of the activity
+      completeMsg:
+        schema:
+          $ref: Action Response Info
+  Object:
+    properties:
+      displayname:
+        type: string
+        description: the display of the name of the object
+      objecttype:
+        type: string
+        description: the type of the object
+      objectuuid:
+        type: string
+        description: the uuid of the object
+      entitytype:
+        type: string
+        description: the entitytype of the object     
+  Metadata:
+    properties:
+      cursor:
+        type: string
+        description: the cursor of the metadata
+      path:
+        type: string
+        description: the path of the metadata      
+  Actor:
+    properties:
+      displayname:
+        type: string
+        description: the display of the name of the actor
+      objecttype:
+        type: string
+        description: the type of the actor
+      objectuuid:
+        type: string
+        description: the uuid of the actor
+      entitytype:
+        type: string
+        description: the entitytype of the actor         
+  Entity:
     properties:
       uuid:
         type: string
-        description: the uuid of a user
+        description: the uuid of the entity
       type:
         type: string
         description: the type of the entity
       created:
         type: number
         description: the ID of the created one
+        format: int32
       modified:
         type: number
         description: the ID of the modified one
-      displayname:
-        type: string
-        description: the display of the name of the user's name
-      objecttype:
-        type: string
-        description: the type of the object
-      actoruuid:
-        type: string
-        description: the uuid of the actor
-      entitytype:
-        type: string
-        description: the type of the entity
-      category:
-        type: string
-        description: the category of the entity
-      cursor:
-        type: string
-        description: the cursor of the metadata
-      path:
-        type: string
-        description: the path of the metadata
+        format: int32
+      actorproperty:
+        schema:
+          $ref: Actor
   Error:
     properties:
       code:
