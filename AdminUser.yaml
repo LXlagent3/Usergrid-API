@@ -37,11 +37,7 @@ paths:
       summary: Updating an admin user
       description: Use the PUT method to update an admin user.
       parameters:
-        - name: userID
-          in: path
-          description: "one of the user's identification which includes username, real name, email address or uuID"
-          required: true
-          type: string
+        - $ref: "#/parameters/userId"
         - name: AdminUserUpdate
           in: body
           description: One or more sets of user properties
@@ -64,11 +60,7 @@ paths:
       summary: Getting an admin user
       description: Use the GET method to retrieve details about an admin user.
       parameters:
-        - name: userID
-          in: path
-          description: "one of the user's identification which includes username, real name, email address or uuID"
-          required: true
-          type: string
+        - $ref: "#/parameters/userId"
       tags:
         - User Info
       responses:
@@ -122,11 +114,7 @@ paths:
       summary: "Setting an admin user's password"
       description: "Use the PUT method to update an admin user's password."
       parameters:
-        - name: userID
-          in: path
-          description: "one of the user's identification which includes username, real name, email address or uuID"
-          required: true
-          type: string
+        - $ref: "#/parameters/userId"
         - name: ResetPW
           in: body
           description: the user's old and new password
@@ -149,11 +137,7 @@ paths:
       summary: Activating an admin user
       description: Use the GET method to activate an admin user from a link provided in an email notification. The complete request URI should be "GET /management/organizations/{org}/users/{user|username|email|uuid}/activate?token={token}&confirm={confirm_email}".
       parameters:
-        - name: userID
-          in: path
-          description: "one of the user's identification which includes username, real name, email address or uuID"
-          required: true
-          type: string
+        - $ref: "#/parameters/userId"
         - name: token
           in: path
           description: activation token
@@ -180,11 +164,7 @@ paths:
       summary: Reactivating an admin user
       description: Use the GET method to reactivate an admin user.
       parameters:
-        - name: userID
-          in: path
-          description: "one of the user's identification which includes username, real name, email address or uuID"
-          required: true
-          type: string
+        - $ref: "#/parameters/userId"
       tags:
         - Action Response Info
       responses:
@@ -201,11 +181,7 @@ paths:
       summary: "Getting an admin user's activity feed"
       description: "Use the GET method to retrieve an admin user's activity feed."
       parameters:
-        - name: userID
-          in: path
-          description: "one of the user's identification which includes username, real name, email address or uuID"
-          required: true
-          type: string
+        - $ref: "#/parameters/userId"
       tags:
         - Activity Feed
       responses:
@@ -657,11 +633,7 @@ paths:
           description: one of the orgnization's identification which includes name or uuid.
           required: true
           type: string 
-        - name: appID
-          in: path
-          description: one of the application's identification which includes name or uuid.
-          required: true
-          type: string 
+        - $ref: "#/parameters/appID"
         - name: collectionID
           in: path
           description: one of the collection's identification which includes name or uuid.
@@ -688,11 +660,7 @@ paths:
           description: one of the orgnization's identification which includes name or uuid.
           required: true
           type: string 
-        - name: appID
-          in: path
-          description: one of the application's identification which includes name or uuid.
-          required: true
-          type: string   
+        - $ref: "#/parameters/appID"  
         - name: entitytype
           in: path
           description: the entity type to create
@@ -725,11 +693,7 @@ paths:
           description: one of the orgnization's identification which includes name or uuid.
           required: true
           type: string 
-        - name: appID
-          in: path
-          description: one of the application's identification which includes name or uuid.
-          required: true
-          type: string 
+        - $ref: "#/parameters/appID"
         - name: collectionID
           in: path
           description: one of the collection's identification which includes name or uuid.
@@ -760,11 +724,7 @@ paths:
           description: one of the orgnization's identification which includes name or uuid.
           required: true
           type: string 
-        - name: appID
-          in: path
-          description: one of the application's identification which includes name or uuid.
-          required: true
-          type: string 
+        - $ref: "#/parameters/appID"
         - name: collectionID
           in: path
           description: one of the collection's identification which includes name or uuid.
@@ -801,11 +761,7 @@ paths:
           description: one of the orgnization's identification which includes name or uuid.
           required: true
           type: string 
-        - name: appID
-          in: path
-          description: one of the application's identification which includes name or uuid.
-          required: true
-          type: string 
+        - $ref: "#/parameters/appID"
         - name: collectionID
           in: path
           description: one of the collection's identification which includes name or uuid.
@@ -837,11 +793,7 @@ paths:
           description: one of the orgnization's identification which includes name or uuid.
           required: true
           type: string 
-        - name: appID
-          in: path
-          description: one of the application's identification which includes name or uuid.
-          required: true
-          type: string 
+        - $ref: "#/parameters/appID"
         - name: collectionID
           in: path
           description: one of the collection's identification which includes name or uuid.
@@ -872,11 +824,7 @@ paths:
           description: one of the orgnization's identification which includes name or uuid.
           required: true
           type: string 
-        - name: appID
-          in: path
-          description: one of the application's identification which includes name or uuid.
-          required: true
-          type: string 
+        - $ref: "#/parameters/appID"
         - name: collectionID
           in: path
           description: one of the collection's identification which includes name or uuid.
@@ -908,11 +856,7 @@ paths:
           description: one of the orgnization's identification which includes name or uuid.
           required: true
           type: string 
-        - name: appID
-          in: path
-          description: one of the application's identification which includes name or uuid.
-          required: true
-          type: string 
+        - $ref: "#/parameters/appID"
         - name: collectionID
           in: path
           description: one of the collection's identification which includes name or uuid.
@@ -953,11 +897,7 @@ paths:
           description: one of the orgnization's identification which includes name or uuid.
           required: true
           type: string 
-        - name: appID
-          in: path
-          description: one of the application's identification which includes name or uuid.
-          required: true
-          type: string 
+        - $ref: "#/parameters/appID"
         - name: collectionID
           in: path
           description: one of the collection's identification which includes name or uuid.
@@ -989,6 +929,19 @@ paths:
           description: Unexpected error
           schema:
             $ref: Error 
+parameters:
+  userId:
+    name: userID
+    in: path
+    description: "one of the user's identification which includes username, real name, email address or uuID"
+    required: true
+    type: string
+  appID:
+    name: appID
+    in: path
+    description: one of the application's identification which includes name or uuid.
+    required: true
+    type: string 
 definitions:
   Entity Properties:
     type: array
